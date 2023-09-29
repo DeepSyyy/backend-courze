@@ -54,3 +54,21 @@ func (service *CourseServiceImpl) GetAllCourse(ctx context.Context) []web.Course
 	courses := service.CourseRepository.GetAllCourse(ctx, tx)
 	return helper.ToCourseResponses(courses)
 }
+
+func (service *CourseServiceImpl) GetCourseById(ctx context.Context, courseId int) web.CourseResponse {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	course := service.CourseRepository.GetCourseById(ctx, tx, courseId)
+	return helper.ToCourseResponse(course)
+}
+
+func (service *CourseServiceImpl) GetCourseByInstructorId(ctx context.Context, instructorId int) []web.CourseResponse {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	courses := service.CourseRepository.GetCourseByInstructorId(ctx, tx, instructorId)
+	return helper.ToCourseResponses(courses)
+}
