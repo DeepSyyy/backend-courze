@@ -5,3 +5,7 @@ func PanicIfError(err error) {
 		panic(err)
 	}
 }
+
+func cumanTest() {
+	PanicIfError(nil)
+}
