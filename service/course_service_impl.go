@@ -34,12 +34,13 @@ func (service *CourseServiceImpl) CreateCourse(ctx context.Context, request web.
 	defer helper.CommitOrRollback(tx)
 
 	course := domain.Course{
-		CourseName:        request.Name,
-		CourseDescription: request.Description,
-		CoursePrice:       request.Price,
-		CourseImage:       request.Image,
-		CourseVideo:       request.Video,
-		InstructorId:      request.InstructorId,
+		Name:         request.Name,
+		Description:  request.Description,
+		Price:        request.Price,
+		Image:        request.Image,
+		Video:        request.Video,
+		InstructorId: request.InstructorId,
+		SneakPeak:    request.SneakPeak,
 	}
 
 	course = service.CourseRepository.CreateCourse(ctx, tx, course)

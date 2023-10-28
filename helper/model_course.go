@@ -7,13 +7,14 @@ import (
 
 func ToCourseResponse(course domain.Course) web.CourseResponse {
 	return web.CourseResponse{
-		Id:           course.CourseId,
-		Name:         course.CourseName,
-		Description:  course.CourseDescription,
-		Price:        course.CoursePrice,
-		Image:        course.CourseImage,
-		Video:        course.CourseVideo,
-		InstructorId: course.InstructorId,
+		Id:          course.Id,
+		Name:        course.Name,
+		Description: course.Description,
+		Price:       course.Price,
+		Image:       course.Image,
+		Video:       course.Video,
+		Instructor:  course.InstructorResponse,
+		SneakPeak:   course.SneakPeak,
 	}
 }
 

@@ -15,14 +15,14 @@ func NewCourseRepository() CourseRepository {
 }
 
 func (repository *CourseRepositoryImpl) CreateCourse(ctx context.Context, tx *sql.Tx, course domain.Course) domain.Course {
-	SQL := "INSERT INTO course (course_name, course_description, course_price, course_image, course_video, instructor_id) VALUES (?, ?, ?, ?, ?, ?)"
-	result, err := tx.ExecContext(ctx, SQL, course.CourseName, course.CourseDescription, course.CoursePrice, course.CourseImage, course.CourseVideo, course.InstructorId)
+	SQL := "INSERT INTO course(course_name, course_description, course_price, course_image, course_video, instructor_id, sneakpeek) VALUES(?,?,?,?,?,?, (SELECT JSON_ARRAY(?)))"
+	result, err := tx.ExecContext(ctx, SQL, course.Name, course.Description, course.Price, course.Image, course.Video, course.InstructorId, course.SneakPeak)
 	helper.PanicIfError(err)
 
 	id, err := result.LastInsertId()
 	helper.PanicIfError(err)
 
-	course.CourseId = int(id)
+	course.Id = int(id)
 	return course
 }
 
@@ -35,7 +35,7 @@ func (repository *CourseRepositoryImpl) GetAllCourse(ctx context.Context, tx *sq
 	var courses []domain.Course
 	for rows.Next() {
 		course := domain.Course{}
-		err := rows.Scan(&course.CourseId, &course.CourseName, &course.CourseDescription, &course.CoursePrice, &course.CourseImage, &course.CourseVideo, &course.InstructorId)
+		err := rows.Scan(course.Id, course.Name, course.Description, course.Price, course.Image, course.Video, course.InstructorId, course.SneakPeak)
 		helper.PanicIfError(err)
 
 		courses = append(courses, course)
@@ -52,7 +52,7 @@ func (repository *CourseRepositoryImpl) GetCourseById(ctx context.Context, tx *s
 
 	course := domain.Course{}
 	for rows.Next() {
-		err := rows.Scan(&course.CourseId, &course.CourseName, &course.CourseDescription, &course.CoursePrice, &course.CourseImage, &course.CourseVideo, &course.InstructorId)
+		err := rows.Scan(course.Id, course.Name, course.Description, course.Price, course.Image, course.Video, course.InstructorId, course.SneakPeak)
 		helper.PanicIfError(err)
 	}
 
@@ -82,7 +82,7 @@ WHERE
 	var courses []domain.Course
 	for rows.Next() {
 		course := domain.Course{}
-		err := rows.Scan(&course.CourseId, &course.CourseName, &course.CourseDescription, &course.CoursePrice, &course.CourseImage, &course.CourseVideo, &course.InstructorId)
+		err := rows.Scan(course.Id, course.Name, course.Description, course.Price, course.Image, course.Video, course.InstructorId, course.SneakPeak)
 		helper.PanicIfError(err)
 
 		courses = append(courses, course)
