@@ -16,16 +16,26 @@ import (
 func main() {
 	db := app.NewDB()
 	validate := validator.New()
+	//repository
+	// Course
 	courseRepository := repository.NewCourseRepository()
 	courseService := service.NewCourseService(courseRepository, db, validate)
 	courseController := controller.NewCourseController(courseService)
+	//admin
+	adminRepository := repository.NewAdminRepository()
+	adminService := service.NewAdminService(adminRepository, db, validate)
+	adminController := controller.NewAdminController(adminService)
 
 	router := httprouter.New()
 
-	router.POST("/api/courses", courseController.CreateCourse)
-	router.GET("/api/courses", courseController.GetAllCourse)
+	router.POST("/api/courze/admin", adminController.CreateCourse)
+
+	router.GET("/api/courze/course", courseController.GetAllCourse)
+	router.GET("/api/courze/course/:courseId", courseController.GetCourseById)
+
+	router.GET("/api/courze/instructor/:instructorId", courseController.GetCourseByInstructorId)
 	address := "localhost:8080"
-	fmt.Printf("server running on http://%v", address)
+	fmt.Printf("server running on http://%v \n", address)
 	// Menjalankan server HTTP dengan router yang telah Anda buat
 	if err := http.ListenAndServe(address, router); err != nil {
 		panic(err)

@@ -6,6 +6,7 @@ import (
 )
 
 type CourseService interface {
-	CreateCourse(ctx context.Context, request web.CourseCreateRequest) web.CourseResponse
 	GetAllCourse(ctx context.Context) []web.CourseResponse
+	GetCourseById(ctx context.Context, courseId int) web.CourseResponse
+	GetCourseByInstructorName(ctx context.Context, InstructorName string) []web.CourseResponse
 }
