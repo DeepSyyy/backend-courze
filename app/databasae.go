@@ -8,7 +8,7 @@ import (
 )
 
 func NewDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:Falah190303@/courze")
+	db, err := sql.Open("mysql", "root:/courze")
 	helper.PanicIfError(err)
 
 	return db
