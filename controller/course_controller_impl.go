@@ -20,20 +20,6 @@ func NewCourseController(courseService service.CourseService) CourseController {
 	}
 }
 
-func (controller *CourseControllerImpl) CreateCourse(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	courseCreateReq := web.CourseCreateRequest{}
-	helper.ReadFromRequestBody(request, &courseCreateReq)
-
-	courseResponse := controller.CourseService.CreateCourse(request.Context(), courseCreateReq)
-	webResponse := web.WebResponse{
-		Code:   200,
-		Status: "OK",
-		Data:   courseResponse,
-	}
-
-	helper.WriteToResponseBody(writer, webResponse)
-}
-
 func (controller *CourseControllerImpl) GetAllCourse(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	courseResponses := controller.CourseService.GetAllCourse(request.Context())
 	webResponse := web.WebResponse{
@@ -61,11 +47,9 @@ func (controller *CourseControllerImpl) GetCourseById(writer http.ResponseWriter
 }
 
 func (controller *CourseControllerImpl) GetCourseByInstructorId(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	instructorId := params.ByName("instructorId")
-	id, err := strconv.Atoi(instructorId)
-	helper.PanicIfError(err)
+	instructorName := params.ByName("instructorName")
 
-	courseResponses := controller.CourseService.GetCourseByInstructorId(request.Context(), id)
+	courseResponses := controller.CourseService.GetCourseByInstructorName(request.Context(), instructorName)
 	webResponse := web.WebResponse{
 		Code:   200,
 		Status: "OK",

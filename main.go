@@ -16,19 +16,19 @@ import (
 func main() {
 	db := app.NewDB()
 	validate := validator.New()
+	//repository
 	// Course
 	courseRepository := repository.NewCourseRepository()
 	courseService := service.NewCourseService(courseRepository, db, validate)
 	courseController := controller.NewCourseController(courseService)
-	// Instructor
-	instructorRepository := repository.NewInstructorRepository()
-	instructorService := service.NewInstructorService(instructorRepository, db, validate)
-	InstructorController := controller.NewInstructorController(instructorService)
+	//admin
+	adminRepository := repository.NewAdminRepository()
+	adminService := service.NewAdminService(adminRepository, db, validate)
+	adminController := controller.NewAdminController(adminService)
 
 	router := httprouter.New()
 
-	router.POST("/api/courze/course", courseController.CreateCourse)
-	router.POST("/api/courze/instructor", InstructorController.Insert)
+	router.POST("/api/courze/admin", adminController.CreateCourse)
 
 	router.GET("/api/courze/course", courseController.GetAllCourse)
 	router.GET("/api/courze/course/:courseId", courseController.GetCourseById)
