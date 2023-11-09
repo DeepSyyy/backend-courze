@@ -7,6 +7,6 @@ import (
 
 type CourseService interface {
 	GetAllCourse(ctx context.Context) []web.CourseResponse
-	GetCourseById(ctx context.Context, courseId int) web.CourseResponse
+	GetCourseById(ctx context.Context, courseId int) (web.CourseResponse, error)
 	GetCourseByInstructorName(ctx context.Context, InstructorName string) []web.CourseResponse
 }

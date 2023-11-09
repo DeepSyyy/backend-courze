@@ -33,13 +33,23 @@ func (service *CourseServiceImpl) GetAllCourse(ctx context.Context) []web.Course
 	return helper.ToCourseResponses(courses)
 }
 
-func (service *CourseServiceImpl) GetCourseById(ctx context.Context, courseId int) web.CourseResponse {
+func (service *CourseServiceImpl) GetCourseById(ctx context.Context, courseId int) (web.CourseResponse, error) {
 	tx, err := service.DB.Begin()
-	helper.PanicIfError(err)
+	if err != nil {
+		// Tangani kesalahan pembukaan transaksi
+		return web.CourseResponse{}, err
+	}
 	defer helper.CommitOrRollback(tx)
 
-	course := service.CourseRepository.GetCourseById(ctx, tx, courseId)
-	return helper.ToCourseResponse(course)
+	course, err := service.CourseRepository.GetCourseById(ctx, tx, courseId)
+	if err != nil {
+		// Tangani kesalahan pengambilan course
+		return web.CourseResponse{}, err
+	}
+
+	// Menutup transaksi setelah sukses mendapatkan course
+
+	return helper.ToCourseResponse(course), nil
 }
 
 func (service *CourseServiceImpl) GetCourseByInstructorName(ctx context.Context, instructorName string) []web.CourseResponse {

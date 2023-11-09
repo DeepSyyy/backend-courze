@@ -25,15 +25,22 @@ func main() {
 	adminRepository := repository.NewAdminRepository()
 	adminService := service.NewAdminService(adminRepository, db, validate)
 	adminController := controller.NewAdminController(adminService)
+	//user
+	userRepository := repository.NewUserRepository()
+	userService := service.NewUserService(userRepository, db, validate)
+	userController := controller.NewUserController(userService)
 
 	router := httprouter.New()
-
+	//admin
 	router.POST("/api/courze/admin", adminController.CreateCourse)
-
+	//course
 	router.GET("/api/courze/course", courseController.GetAllCourse)
 	router.GET("/api/courze/course/:courseId", courseController.GetCourseById)
-
 	router.GET("/api/courze/instructor/:instructorId", courseController.GetCourseByInstructorId)
+	//user
+	router.POST("/api/courze/user/register", userController.Register)
+	router.POST("/api/courze/user/login", userController.LoginUser)
+	router.PUT("/api/courze/user", userController.UpdateUser)
 	address := "localhost:8080"
 	fmt.Printf("server running on http://%v \n", address)
 	// Menjalankan server HTTP dengan router yang telah Anda buat

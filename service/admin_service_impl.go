@@ -26,7 +26,7 @@ func NewAdminService(adminRepository repository.AdminRepository, DB *sql.DB, val
 	}
 }
 
-func (service *AdminServiceImpl) CreateCourse(ctx context.Context, request web.AdminRequest) web.CourseResponse {
+func (service *AdminServiceImpl) CreateCourse(ctx context.Context, request web.CourseCreateRequest) web.CourseResponse {
 	err := service.Validate.Struct(request)
 	helper.PanicIfError(err)
 
@@ -35,12 +35,12 @@ func (service *AdminServiceImpl) CreateCourse(ctx context.Context, request web.A
 	defer helper.CommitOrRollback(tx)
 
 	course := domain.Course{
-		Name:           request.Course.Name,
-		Description:    request.Course.Description,
-		Price:          request.Course.Price,
-		Image:          request.Course.Image,
-		Video:          request.Course.Video,
-		InstructorName: request.Course.InstructorName,
+		Name:           request.Name,
+		Description:    request.Description,
+		Price:          request.Price,
+		Image:          request.Image,
+		Video:          request.Video,
+		InstructorName: request.InstructorName,
 	}
 	course = service.AdminRepository.CreateCourse(ctx, tx, course)
 

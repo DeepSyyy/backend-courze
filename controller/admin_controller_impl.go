@@ -21,7 +21,7 @@ func NewAdminController(adminService service.AdminService) AdminController {
 }
 
 func (controller *AdminControllerImpl) CreateCourse(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	courseCreateRequest := web.AdminRequest{}
+	courseCreateRequest := web.CourseCreateRequest{}
 	helper.ReadFromRequestBody(request, &courseCreateRequest)
 
 	courseResponse := controller.AdminService.CreateCourse(request.Context(), courseCreateRequest)

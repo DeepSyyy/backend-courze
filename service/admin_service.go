@@ -6,7 +6,7 @@ import (
 )
 
 type AdminService interface {
-	CreateCourse(ctx context.Context, request web.AdminRequest) web.CourseResponse
+	CreateCourse(ctx context.Context, request web.CourseCreateRequest) web.CourseResponse
 	UpdateCourse(ctx context.Context, request web.CourseUpdateRequest) web.CourseResponse
 	DeleteCourse(ctx context.Context, courseID int)
 }

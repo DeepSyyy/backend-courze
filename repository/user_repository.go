@@ -7,6 +7,8 @@ import (
 )
 
 type UserRepository interface {
-	CreateUser(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
+	Register(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
 	UpdateUser(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
+	LoginUser(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error)
+	GetUserByID(ctx context.Context, tx *sql.Tx, userID string) (domain.User, error)
 }
