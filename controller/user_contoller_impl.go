@@ -2,8 +2,10 @@ package controller
 
 import (
 	"courze-backend-app/helper"
+	"courze-backend-app/model/domain"
 	"courze-backend-app/model/web"
 	"courze-backend-app/service"
+	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -24,15 +26,36 @@ func (controller *UserControllerImpl) Register(writer http.ResponseWriter, reque
 	userCreateReq := web.UserRequest{}
 	helper.ReadFromRequestBody(request, &userCreateReq)
 
-	userResponse := controller.UserService.Register(request.Context(), userCreateReq)
-	webResponse := web.WebResponse{
-		Code:   200,
-		Status: "OK",
-		Data:   userResponse,
+	userResponse, err := controller.UserService.Register(request.Context(), userCreateReq)
+
+	if err != nil {
+		switch err := err.(type) {
+		case *domain.ErrUserAlreadyExists:
+			// Handle ErrUserAlreadyExists
+			fmt.Printf("Type: %T\n", err)
+			webResponse := web.WebResponse{
+				Code:   http.StatusConflict,
+				Status: "Conflict",
+				Data:   "User already exists",
+			}
+			helper.WriteToResponseBody(writer, webResponse)
+			return
+		default:
+			// Handle other error cases
+			fmt.Printf("Type: %T\n", err)
+			webResponse := web.WebResponse{
+				Code:   http.StatusInternalServerError,
+				Status: "Error",
+				Data:   "An unexpected error occurred",
+			}
+			helper.WriteToResponseBody(writer, webResponse)
+			return
+		}
+
 	}
 
-	helper.WriteToResponseBody(writer, webResponse)
-
+	// Success
+	helper.WriteToResponseBody(writer, userResponse)
 }
 
 func (controller *UserControllerImpl) UpdateUser(writer http.ResponseWriter, request *http.Request, param httprouter.Params) {

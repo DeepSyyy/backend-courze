@@ -17,18 +17,53 @@ func NewUserRepository() UserRepository {
 	return &UserRepositoryImpl{}
 }
 
-func (repository *UserRepositoryImpl) Register(ctx context.Context, tx *sql.Tx, user domain.User) domain.User {
+func (repository *UserRepositoryImpl) GetUserByEmail(ctx context.Context, tx *sql.Tx, email string) (domain.User, error) {
+	// Prepare SQL query
+	SQL := "SELECT user_id, nama, email, password, is_verified FROM user WHERE email = ?"
+
+	// Execute SQL query
+	row := tx.QueryRowContext(ctx, SQL, email)
+
+	// Scan results into user object
+	var user domain.User
+	err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.IsVerified)
+
+	// Return user object or error
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return domain.User{}, nil
+		}
+
+		return domain.User{}, err
+	}
+
+	return user, nil
+}
+
+func (repository *UserRepositoryImpl) Register(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
+	// Check if user with the given email already exists
+	existingUser, err := repository.GetUserByEmail(ctx, tx, user.Email)
+	if err != nil && err != sql.ErrNoRows {
+		return domain.User{}, err
+	}
+	if existingUser != (domain.User{}) {
+		return domain.User{}, errors.New("user already exists")
+	}
+
+	// Proceed with user registration if user doesn't exist
 	user.Id = uuid.New()
 	user.IsVerified = false
 	user.CreatedAt = helper.GetCurrentTime()
-	SQL := "INSERT INTO user(user_id,nama, email, password, is_verified, created_at) VALUES(?,?,?,?,?,?)"
-	_, err := tx.ExecContext(ctx, SQL, user.Id, user.Name, user.Email, user.Password, user.IsVerified, user.CreatedAt)
-	helper.PanicIfError(err)
-	helper.PanicIfError(err)
 
-	return user
+	SQL := "INSERT INTO user(user_id, nama, email, password, is_verified, created_at) VALUES(?,?,?,?,?,?)"
+	_, err = tx.ExecContext(ctx, SQL, user.Id, user.Name, user.Email, user.Password, user.IsVerified, user.CreatedAt)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	// Return the registered user
+	return user, nil
 }
-
 func (repository *UserRepositoryImpl) UpdateUser(ctx context.Context, tx *sql.Tx, user domain.User) domain.User {
 	SQL := "UPDATE user SET name = ?, email = ?, password = ? WHERE user_id = ?"
 	_, err := tx.ExecContext(ctx, SQL, user.Name, user.Email, user.Password, user.Id)
@@ -38,25 +73,17 @@ func (repository *UserRepositoryImpl) UpdateUser(ctx context.Context, tx *sql.Tx
 }
 
 func (repository *UserRepositoryImpl) LoginUser(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
-	SQL := "SELECT email, password FROM user WHERE email = ?"
+	SQL := "SELECT user_id, nama, email, password,is_verified FROM user WHERE email = ?"
 	row := tx.QueryRowContext(ctx, SQL, user.Email)
 
 	var result domain.User
-	err := row.Scan(&result.Email, &result.Password)
+	err := row.Scan(&result.Id, &result.Name, &result.Email, &result.Password, &result.IsVerified)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// Email tidak ditemukan
-			return domain.User{}, errors.New("email not found")
+			return domain.User{}, errors.New("invalid email or password")
 		}
 
-		// Kesalahan lainnya
 		return domain.User{}, err
-	}
-
-	// Periksa apakah password cocok (dengan asumsi password di-hashing)
-	if result.Password != user.Password {
-		// Password tidak cocok
-		return domain.User{}, errors.New("invalid password")
 	}
 
 	return result, nil

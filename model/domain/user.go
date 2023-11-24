@@ -14,3 +14,15 @@ type User struct {
 	IsVerified bool      `json:"is_verified"`
 	CreatedAt  time.Time `json:"create_at"`
 }
+
+type ErrUserAlreadyExists struct {
+	message string
+}
+
+func (e ErrUserAlreadyExists) Error() string {
+	return "User already exists: " + e.message
+}
+
+func NewErrUserAlreadyExists(message string) *ErrUserAlreadyExists {
+	return &ErrUserAlreadyExists{message}
+}

@@ -6,10 +6,13 @@ import (
 	"courze-backend-app/model/web"
 	"courze-backend-app/repository"
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"courze-backend-app/helper"
 
 	"github.com/go-playground/validator"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserServiceImpl struct {
@@ -26,25 +29,38 @@ func NewUserService(userRepository repository.UserRepository, DB *sql.DB, valida
 	}
 }
 
-func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRequest) web.UserResponse {
+func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRequest) (web.UserResponse, error) {
 	err := service.Validate.Struct(request)
-	helper.PanicIfError(err)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
 
 	tx, err := service.DB.Begin()
-	helper.PanicIfError(err)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
 	defer helper.CommitOrRollback(tx)
-
+	fmt.Println("pass1")
+	hashPassword, err := helper.GenerateHashPassword(request.Password)
+	if err != nil {
+		helper.PanicIfError(err)
+	}
+	fmt.Println(hashPassword)
+	fmt.Println("pass2")
 	user := domain.User{
 		Name:       request.Name,
 		Email:      request.Email,
-		Password:   request.Password,
+		Password:   hashPassword,
 		IsVerified: false,
 		CreatedAt:  helper.GetCurrentTime(),
 	}
-	user = service.UserRepository.Register(ctx, tx, user)
-
-	return helper.ToUserResponse(user)
-
+	fmt.Println("pass3")
+	user, err = service.UserRepository.Register(ctx, tx, user)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+	fmt.Println("pass4")
+	return helper.ToUserResponse(user), nil
 }
 
 func (service *UserServiceImpl) UpdateUser(ctx context.Context, request web.UserUpdateRequest) web.UserResponse {
@@ -69,13 +85,11 @@ func (service *UserServiceImpl) UpdateUser(ctx context.Context, request web.User
 func (service *UserServiceImpl) LoginUser(ctx context.Context, request web.UserRequest) (web.UserResponse, error) {
 	err := service.Validate.Struct(request)
 	if err != nil {
-		// Kesalahan validasi, kembalikan error
 		return web.UserResponse{}, err
 	}
 
 	tx, err := service.DB.Begin()
 	if err != nil {
-		// Kesalahan membuka transaksi, kembalikan error
 		return web.UserResponse{}, err
 	}
 	defer helper.CommitOrRollback(tx)
@@ -84,13 +98,19 @@ func (service *UserServiceImpl) LoginUser(ctx context.Context, request web.UserR
 		Email:    request.Email,
 		Password: request.Password,
 	}
-	user, err = service.UserRepository.LoginUser(ctx, tx, user)
+
+	userFromDB, err := service.UserRepository.LoginUser(ctx, tx, user)
 	if err != nil {
-		// Tangani kesalahan login dengan memberikan respons yang sesuai
 		return web.UserResponse{}, err
 	}
 
-	return helper.ToUserResponse(user), nil
+	// Verify password using bcrypt
+	err = bcrypt.CompareHashAndPassword([]byte(userFromDB.Password), []byte(request.Password))
+	if err != nil {
+		return web.UserResponse{}, errors.New("invalid email or password")
+	}
+
+	return helper.ToUserResponse(userFromDB), nil
 }
 
 func (service *UserServiceImpl) GetUserByID(ctx context.Context, id string) (web.UserResponse, error) {

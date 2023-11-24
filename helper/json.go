@@ -1,6 +1,7 @@
 package helper
 
 import (
+	web "courze-backend-app/model/web"
 	"encoding/json"
 	"net/http"
 )
@@ -16,4 +17,12 @@ func WriteToResponseBody(response http.ResponseWriter, result interface{}) {
 	encoder := json.NewEncoder(response)
 	err := encoder.Encode(result)
 	PanicIfError(err)
+}
+
+func ToErrorResponse(err error, statusCode int) web.WebResponse {
+	return web.WebResponse{
+		Code:   statusCode,
+		Status: "Error",
+		Data:   err.Error(),
+	}
 }
