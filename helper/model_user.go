@@ -23,3 +23,19 @@ func ToUserResponses(users []domain.User) []web.UserResponse {
 	}
 	return userResponse
 }
+
+func ToUserCourseResponses(usercourses []domain.UserCourse) []web.UserCourseResponse {
+	var userCourseResponse []web.UserCourseResponse
+	for _, usercourse := range usercourses {
+		userCourseResponse = append(userCourseResponse, ToUserCourseResponse(usercourse))
+	}
+	return userCourseResponse
+}
+
+func ToUserCourseResponse(usercourse domain.UserCourse) web.UserCourseResponse {
+	return web.UserCourseResponse{
+		Id:       usercourse.Id,
+		UserId:   usercourse.UserId,
+		CourseId: usercourse.CourseId,
+	}
+}

@@ -105,3 +105,35 @@ func (repository *UserRepositoryImpl) GetUserByID(ctx context.Context, tx *sql.T
 		return result, errors.New("user tidak ditemukan")
 	}
 }
+
+func (repository *UserRepositoryImpl) Enroll(ctx context.Context, tx *sql.Tx, usercourse domain.UserCourse) (domain.UserCourse, error) {
+	SQL := "INSERT INTO user_courses(user_id,course_id,) VALUES(?,?))"
+	result, err := tx.ExecContext(ctx, SQL, usercourse.UserId, usercourse.CourseId)
+	helper.PanicIfError(err)
+	id, err := result.LastInsertId()
+	helper.PanicIfError(err)
+	usercourse.Id = int(id)
+
+	return usercourse, nil
+}
+
+func (repository *UserRepositoryImpl) GetUserCourseByID(ctx context.Context, tx *sql.Tx, userID string) ([]domain.UserCourse, error) {
+	SQL := "SELECT id,user_id,course_id, FROM user_courses WHERE user_id = ?"
+	rows, err := tx.QueryContext(ctx, SQL, userID)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var result []domain.UserCourse
+	if rows.Next() {
+		course := domain.UserCourse{}
+		err := rows.Scan(&course.Id, &course.UserId, &course.CourseId)
+		helper.PanicIfError(err)
+
+		result = append(result, course)
+		helper.PanicIfError(err)
+		return result, nil
+	} else {
+		// User course tidak ditemukan, mungkin berikan respons atau tindakan yang sesuai
+		return result, errors.New("user course tidak ditemukan")
+	}
+}

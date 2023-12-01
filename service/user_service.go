@@ -10,4 +10,6 @@ type UserService interface {
 	UpdateUser(ctx context.Context, user web.UserUpdateRequest) web.UserResponse
 	LoginUser(ctx context.Context, user web.UserRequest) (web.UserResponse, error)
 	GetUserByID(ctx context.Context, userID string) (web.UserResponse, error)
+	Enroll(ctx context.Context, usercourse web.UserCourseRequest) (web.UserCourseResponse, error)
+	GetUserCourseByID(ctx context.Context, userID string) []web.UserCourseResponse
 }
