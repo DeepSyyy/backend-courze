@@ -25,3 +25,4 @@ func ToCourseResponses(courses []domain.Course) []web.CourseResponse {
 	}
 	return courseResponse
 }
+

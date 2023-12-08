@@ -10,4 +10,6 @@ type UserController interface {
 	Register(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
 	UpdateUser(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
 	LoginUser(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
+	Enroll(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
+	GetUserCourseByID(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
 }
