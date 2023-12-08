@@ -16,7 +16,7 @@ func NewCourseRepository() CourseRepository {
 }
 
 func (repository *CourseRepositoryImpl) GetAllCourse(ctx context.Context, tx *sql.Tx) []domain.Course {
-	SQL := "SELECT course_id, course_name, course_description, course_price, course_image, course_video, instructor_name FROM course"
+	SQL := "SELECT course_id, course_name, course_description, course_price, course_image, course_video, instructor_name, sneakpeek FROM course"
 	rows, err := tx.QueryContext(ctx, SQL)
 	helper.PanicIfError(err)
 	defer rows.Close()
@@ -24,7 +24,7 @@ func (repository *CourseRepositoryImpl) GetAllCourse(ctx context.Context, tx *sq
 	var courses []domain.Course
 	for rows.Next() {
 		course := domain.Course{}
-		err := rows.Scan(course.Id, course.Name, course.Description, course.Price, course.Image, course.Video, course.InstructorName, course.SneakPeak)
+		err := rows.Scan(&course.Id, &course.Name, &course.Description, &course.Price, &course.Image, &course.Video, &course.InstructorName, &course.SneakPeak)
 		helper.PanicIfError(err)
 
 		courses = append(courses, course)
