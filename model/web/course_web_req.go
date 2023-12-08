@@ -9,5 +9,5 @@ type CourseCreateRequest struct {
 	Image          string          `json:"image" validate:"required"`
 	Video          string          `json:"video" validate:"required"`
 	InstructorName string          `json:"instructor_name" validate:"required"`
-	SneakPeak      json.RawMessage `json:"sneak_peak" validate:"required"`
+	SneakPeak      json.RawMessage `json:"sneak_peak"`
 }

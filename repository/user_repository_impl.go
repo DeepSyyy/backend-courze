@@ -107,7 +107,7 @@ func (repository *UserRepositoryImpl) GetUserByID(ctx context.Context, tx *sql.T
 }
 
 func (repository *UserRepositoryImpl) Enroll(ctx context.Context, tx *sql.Tx, usercourse domain.UserCourse) (domain.UserCourse, error) {
-	SQL := "INSERT INTO user_courses(user_id,course_id,) VALUES(?,?))"
+	SQL := "INSERT INTO user_courses(user_id,course_id) VALUES(?,?)"
 	result, err := tx.ExecContext(ctx, SQL, usercourse.UserId, usercourse.CourseId)
 	helper.PanicIfError(err)
 	id, err := result.LastInsertId()
@@ -118,7 +118,7 @@ func (repository *UserRepositoryImpl) Enroll(ctx context.Context, tx *sql.Tx, us
 }
 
 func (repository *UserRepositoryImpl) GetUserCourseByID(ctx context.Context, tx *sql.Tx, userID string) ([]domain.UserCourse, error) {
-	SQL := "SELECT id,user_id,course_id, FROM user_courses WHERE user_id = ?"
+	SQL := "SELECT id,user_id,course_id FROM user_courses WHERE user_id = ?"
 	rows, err := tx.QueryContext(ctx, SQL, userID)
 	helper.PanicIfError(err)
 	defer rows.Close()
