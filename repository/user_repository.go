@@ -12,4 +12,6 @@ type UserRepository interface {
 	UpdateUser(ctx context.Context, tx *sql.Tx, user domain.User) domain.User
 	LoginUser(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error)
 	GetUserByID(ctx context.Context, tx *sql.Tx, userID string) (domain.User, error)
+	Enroll(ctx context.Context, tx *sql.Tx, usercourse domain.UserCourse) (domain.UserCourse, error)
+	GetUserCourseByID(ctx context.Context, tx *sql.Tx, userID string) ([]domain.UserCourse, error)
 }

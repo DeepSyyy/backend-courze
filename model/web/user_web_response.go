@@ -14,3 +14,9 @@ type UserResponse struct {
 	IsVerified bool      `json:"is_verified"`
 	CreatedAt  time.Time `json:"create_at"`
 }
+
+type UserCourseResponse struct {
+	Id       int       `json:"id"`
+	UserId   uuid.UUID `json:"user_id"`
+	CourseId int       `json:"course_id"`
+}

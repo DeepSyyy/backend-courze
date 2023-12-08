@@ -129,3 +129,27 @@ func (service *UserServiceImpl) GetUserByID(ctx context.Context, id string) (web
 
 	return helper.ToUserResponse(user), nil
 }
+
+func (service *UserServiceImpl) Enroll(ctx context.Context, usercourse web.UserCourseRequest) (web.UserCourseResponse, error) {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	userCourse := domain.UserCourse{
+		UserId:   usercourse.UserId,
+		CourseId: usercourse.CourseId,
+	}
+	userCourse, _ = service.UserRepository.Enroll(ctx, tx, userCourse)
+
+	return helper.ToUserCourseResponse(userCourse), nil
+
+}
+
+func (service *UserServiceImpl) GetUserCourseByID(ctx context.Context, userID string) []web.UserCourseResponse {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	courses, _ := service.UserRepository.GetUserCourseByID(ctx, tx, userID)
+	return helper.ToUserCourseResponses(courses)
+}

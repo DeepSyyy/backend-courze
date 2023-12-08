@@ -15,6 +15,18 @@ type User struct {
 	CreatedAt  time.Time `json:"create_at"`
 }
 
+type UserCourse struct {
+	Id       int       `json:"id"`
+	UserId   uuid.UUID `json:"user_id"`
+	CourseId int       `json:"course_id"`
+}
+
+type Wishlist struct {
+	Id       int       `json:"id"`
+	UserId   uuid.UUID `json:"user_id"`
+	CourseId int       `json:"course_id"`
+}
+
 type ErrUserAlreadyExists struct {
 	message string
 }
