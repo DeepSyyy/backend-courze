@@ -10,4 +10,5 @@ type CourseController interface {
 	GetAllCourse(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	GetCourseById(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 	GetCourseByInstructorId(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
+	GetCourseByName(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 }

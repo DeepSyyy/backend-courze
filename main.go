@@ -35,7 +35,8 @@ func main() {
 	router.POST("/api/courze/admin", adminController.CreateCourse)
 	//course
 	router.GET("/api/courze/course", courseController.GetAllCourse)
-	router.GET("/api/courze/course/:courseId", courseController.GetCourseById)
+	router.GET("/api/courze/course/name/:courseName", courseController.GetCourseByName)
+	router.GET("/api/courze/course/id/:courseId", courseController.GetCourseById)
 	router.GET("/api/courze/instructor/:instructorId", courseController.GetCourseByInstructorId)
 	//user
 	router.POST("/api/courze/user/register", userController.Register)

@@ -34,7 +34,7 @@ func (repository *CourseRepositoryImpl) GetAllCourse(ctx context.Context, tx *sq
 }
 
 func (repository *CourseRepositoryImpl) GetCourseById(ctx context.Context, tx *sql.Tx, courseId int) (domain.Course, error) {
-	SQL := "SELECT course_id, course_name, course_description, course_price, course_image, course_video, instructor_name FROM course WHERE course_id = ?"
+	SQL := "SELECT course_id, course_name, course_description, course_price, course_image, course_video, instructor_name, sneakpeek FROM course WHERE course_id = ?"
 	rows, err := tx.QueryContext(ctx, SQL, courseId)
 	if err != nil {
 		// Tangani kesalahan saat eksekusi query
@@ -77,4 +77,25 @@ func (repository *CourseRepositoryImpl) GetCourseByInstructorName(ctx context.Co
 	}
 
 	return courses
+}
+
+func (repository *CourseRepositoryImpl) GetCourseByName(ctx context.Context, tx *sql.Tx, courseName string) ([]domain.Course, error) {
+	SQL := `SELECT course_id, course_name, course_description, course_price, course_image, course_video, instructor_name, created_at, updated_at, sneakpeek FROM course WHERE course_name = ?`
+	rows, err := tx.QueryContext(ctx, SQL, courseName)
+	helper.PanicIfError(err)
+
+	var courses []domain.Course
+	for rows.Next() {
+		course := domain.Course{}
+		err := rows.Scan(course.Id, course.Name, course.Description, course.Price, course.Image, course.Video, course.InstructorName, course.CreatedAt, course.UpdatedAt, course.SneakPeak)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if len(courses) == 0 {
+		return nil, errors.New("course not found")
+	}
+
+	return courses, nil
 }

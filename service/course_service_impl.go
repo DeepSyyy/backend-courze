@@ -60,3 +60,17 @@ func (service *CourseServiceImpl) GetCourseByInstructorName(ctx context.Context,
 	courses := service.CourseRepository.GetCourseByInstructorName(ctx, tx, instructorName)
 	return helper.ToCourseResponses(courses)
 }
+
+func (service *CourseServiceImpl) GetCourseByName(ctx context.Context, courseName string) ([]web.CourseResponse, error) {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	courses, err := service.CourseRepository.GetCourseByName(ctx, tx, courseName)
+	if err != nil {
+		// Tangani kesalahan pengambilan course
+		return []web.CourseResponse{}, err
+	}
+
+	return helper.ToCourseResponses(courses), nil
+}

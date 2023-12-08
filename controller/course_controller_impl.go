@@ -23,7 +23,7 @@ func NewCourseController(courseService service.CourseService) CourseController {
 func (controller *CourseControllerImpl) GetAllCourse(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	courseResponses := controller.CourseService.GetAllCourse(request.Context())
 	webResponse := web.WebResponse{
-		Code:   200,
+		Code:   http.StatusOK,
 		Status: "OK",
 		Data:   courseResponses,
 	}
@@ -41,7 +41,7 @@ func (controller *CourseControllerImpl) GetCourseById(writer http.ResponseWriter
 			Status: "Bad Request",
 			Data:   nil,
 		}
-		helper.WriteToResponseBody(writer, webResponse)
+		helper.WriteBadRequestToResponseBody(writer, webResponse)
 		return
 	}
 
@@ -52,9 +52,9 @@ func (controller *CourseControllerImpl) GetCourseById(writer http.ResponseWriter
 		webResponse := web.WebResponse{
 			Code:   http.StatusNotFound, // 404 Not Found
 			Status: "Not Found",
-			Data:   err.Error(), // Menyertakan pesan kesalahan dalam respons
+			Data:   nil,
 		}
-		helper.WriteToResponseBody(writer, webResponse)
+		helper.WriteNotFoundToResponseBody(writer, webResponse)
 		return
 	}
 
@@ -72,10 +72,33 @@ func (controller *CourseControllerImpl) GetCourseByInstructorId(writer http.Resp
 
 	courseResponses := controller.CourseService.GetCourseByInstructorName(request.Context(), instructorName)
 	webResponse := web.WebResponse{
-		Code:   200,
+		Code:   http.StatusOK,
 		Status: "OK",
 		Data:   courseResponses,
 	}
 
 	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (controller *CourseControllerImpl) GetCourseByName(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	courseName := params.ByName("courseName")
+
+	courseResponses, err := controller.CourseService.GetCourseByName(request.Context(), courseName)
+	if err != nil {
+		// Tangani kesalahan dari CourseService
+		webResponse := web.WebResponse{
+			Code:   http.StatusNotFound,
+			Status: "Not Found",
+			Data:   nil,
+		}
+		helper.WriteNotFoundToResponseBody(writer, webResponse)
+
+	} else {
+		webResponse := web.WebResponse{
+			Code:   http.StatusOK,
+			Status: "OK",
+			Data:   courseResponses,
+		}
+		helper.WriteToResponseBody(writer, webResponse)
+	}
 }

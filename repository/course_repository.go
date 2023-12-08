@@ -10,4 +10,5 @@ type CourseRepository interface {
 	GetAllCourse(ctx context.Context, tx *sql.Tx) []domain.Course
 	GetCourseById(ctx context.Context, tx *sql.Tx, courseId int) (domain.Course, error)
 	GetCourseByInstructorName(ctx context.Context, tx *sql.Tx, instructorName string) []domain.Course
+	GetCourseByName(ctx context.Context, tx *sql.Tx, courseName string) ([]domain.Course, error)
 }

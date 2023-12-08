@@ -1,7 +1,6 @@
 package helper
 
 import (
-	web "courze-backend-app/model/web"
 	"encoding/json"
 	"net/http"
 )
@@ -19,10 +18,50 @@ func WriteToResponseBody(response http.ResponseWriter, result interface{}) {
 	PanicIfError(err)
 }
 
-func ToErrorResponse(err error, statusCode int) web.WebResponse {
-	return web.WebResponse{
-		Code:   statusCode,
-		Status: "Error",
-		Data:   err.Error(),
-	}
+func WriteNotFoundToResponseBody(response http.ResponseWriter, result interface{}) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusNotFound)
+	encoder := json.NewEncoder(response)
+	err := encoder.Encode(result)
+	PanicIfError(err)
+}
+
+func WriteBadRequestToResponseBody(response http.ResponseWriter, result interface{}) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusBadRequest)
+	encoder := json.NewEncoder(response)
+	err := encoder.Encode(result)
+	PanicIfError(err)
+}
+
+func WriteInternalServerErrorToResponseBody(response http.ResponseWriter, result interface{}) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusInternalServerError)
+	encoder := json.NewEncoder(response)
+	err := encoder.Encode(result)
+	PanicIfError(err)
+}
+
+func WriteSuccesCreatedToResponseBody(response http.ResponseWriter, result interface{}) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusCreated)
+	encoder := json.NewEncoder(response)
+	err := encoder.Encode(result)
+	PanicIfError(err)
+}
+
+func WriteDeleteSuccessToResponseBody(response http.ResponseWriter, result interface{}) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	encoder := json.NewEncoder(response)
+	err := encoder.Encode(result)
+	PanicIfError(err)
+}
+
+func WriteUpdateSuccessToResponseBody(response http.ResponseWriter, result interface{}) {
+	response.Header().Set("Content-Type", "application/json")
+	response.WriteHeader(http.StatusOK)
+	encoder := json.NewEncoder(response)
+	err := encoder.Encode(result)
+	PanicIfError(err)
 }
