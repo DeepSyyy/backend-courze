@@ -96,14 +96,14 @@ func (repository *UserRepositoryImpl) GetUserByID(ctx context.Context, tx *sql.T
 	defer rows.Close()
 
 	var result domain.User
-	if rows.Next() {
+	for rows.Next() {
 		err := rows.Scan(&result.Id, &result.Name, &result.Email, &result.Password, &result.IsVerified, &result.CreatedAt)
-		helper.PanicIfError(err)
-		return result, nil
-	} else {
-		// User tidak ditemukan, mungkin berikan respons atau tindakan yang sesuai
-		return result, errors.New("user tidak ditemukan")
+		if err != nil {
+			return domain.User{}, err
+		}
 	}
+
+	return result, nil
 }
 
 func (repository *UserRepositoryImpl) Enroll(ctx context.Context, tx *sql.Tx, usercourse domain.UserCourse) (domain.UserCourse, error) {
@@ -124,16 +124,12 @@ func (repository *UserRepositoryImpl) GetUserCourseByID(ctx context.Context, tx 
 	defer rows.Close()
 
 	var result []domain.UserCourse
-	if rows.Next() {
-		course := domain.UserCourse{}
-		err := rows.Scan(&course.Id, &course.UserId, &course.CourseId)
+	for rows.Next() {
+		usercourse := domain.UserCourse{}
+		err := rows.Scan(&usercourse.Id, &usercourse.UserId, &usercourse.CourseId)
 		helper.PanicIfError(err)
-
-		result = append(result, course)
-		helper.PanicIfError(err)
-		return result, nil
-	} else {
-		// User course tidak ditemukan, mungkin berikan respons atau tindakan yang sesuai
-		return result, errors.New("user course tidak ditemukan")
+		result = append(result, usercourse)
 	}
+
+	return result, nil
 }
