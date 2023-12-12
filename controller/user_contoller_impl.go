@@ -171,3 +171,52 @@ func (controller *UserControllerImpl) GetUserCourseByID(writer http.ResponseWrit
 		helper.WriteToResponseBody(writer, webResponse)
 	}
 }
+
+func (controller *UserControllerImpl) AddWishlist(writer http.ResponseWriter, request *http.Request, param httprouter.Params) {
+	userWishReq := web.WishlistRequest{}
+	helper.ReadFromRequestBody(request, &userWishReq)
+
+	// Memanggil LoginUser dari UserService
+	userResponse, err := controller.UserService.AddWishlist(request.Context(), userWishReq)
+	if err != nil {
+		// Tangani kesalahan login dengan memberikan respons yang sesuai
+		webResponse := web.WebResponse{
+			Code:   http.StatusNotFound, // 404 Not Found
+			Status: "Not Found",
+			Data:   err.Error(), // Menyertakan pesan kesalahan dalam respons
+		}
+		helper.WriteToResponseBody(writer, webResponse)
+		return
+	}
+
+	// Login sukses, berikan respons dengan data pengguna yang masuk
+	webResponse := web.WebResponse{
+		Code:   http.StatusOK, // 200 OK
+		Status: "OK",
+		Data:   userResponse,
+	}
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (controller *UserControllerImpl) GetWishlistByID(writer http.ResponseWriter, request *http.Request, param httprouter.Params) {
+	userID := param.ByName("userID")
+
+	wishlistResponses := controller.UserService.GetWishlistByID(request.Context(), userID)
+	if wishlistResponses == nil {
+		// Tangani kesalahan dari CourseService
+		webResponse := web.WebResponse{
+			Code:   http.StatusNotFound,
+			Status: "Not Found",
+			Data:   nil,
+		}
+		helper.WriteNotFoundToResponseBody(writer, webResponse)
+
+	} else {
+		webResponse := web.WebResponse{
+			Code:   http.StatusOK,
+			Status: "OK",
+			Data:   wishlistResponses,
+		}
+		helper.WriteToResponseBody(writer, webResponse)
+	}
+}

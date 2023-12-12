@@ -12,4 +12,6 @@ type UserService interface {
 	GetUserByID(ctx context.Context, userID string) (web.UserResponse, error)
 	Enroll(ctx context.Context, usercourse web.UserCourseRequest) (web.UserCourseResponse, error)
 	GetUserCourseByID(ctx context.Context, userID string) []web.UserCourseResponse
+	AddWishlist(ctx context.Context, usercourse web.WishlistRequest) (web.WishlistResponse, error)
+	GetWishlistByID(ctx context.Context, userID string) []web.WishlistResponse
 }

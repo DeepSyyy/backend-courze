@@ -24,6 +24,14 @@ func ToUserResponses(users []domain.User) []web.UserResponse {
 	return userResponse
 }
 
+func ToUserCourseResponse(usercourse domain.UserCourse) web.UserCourseResponse {
+	return web.UserCourseResponse{
+		Id:       usercourse.Id,
+		UserId:   usercourse.UserId,
+		CourseId: usercourse.CourseId,
+	}
+}
+
 func ToUserCourseResponses(usercourses []domain.UserCourse) []web.UserCourseResponse {
 	var userCourseResponse []web.UserCourseResponse
 	for _, usercourse := range usercourses {
@@ -32,10 +40,18 @@ func ToUserCourseResponses(usercourses []domain.UserCourse) []web.UserCourseResp
 	return userCourseResponse
 }
 
-func ToUserCourseResponse(usercourse domain.UserCourse) web.UserCourseResponse {
-	return web.UserCourseResponse{
-		Id:       usercourse.Id,
-		UserId:   usercourse.UserId,
-		CourseId: usercourse.CourseId,
+func ToWishlistResponse(wishlist domain.Wishlist) web.WishlistResponse {
+	return web.WishlistResponse{
+		Id:       wishlist.Id,
+		UserId:   wishlist.UserId,
+		CourseId: wishlist.CourseId,
 	}
+}
+
+func ToWishlistResponses(wishlists []domain.Wishlist) []web.WishlistResponse {
+	var wishlistResponse []web.WishlistResponse
+	for _, wishlist := range wishlists {
+		wishlistResponse = append(wishlistResponse, ToWishlistResponse(wishlist))
+	}
+	return wishlistResponse
 }

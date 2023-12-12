@@ -133,3 +133,31 @@ func (repository *UserRepositoryImpl) GetUserCourseByID(ctx context.Context, tx 
 
 	return result, nil
 }
+
+func (repository *UserRepositoryImpl) AddWishlist(ctx context.Context, tx *sql.Tx, wishlist domain.Wishlist) (domain.Wishlist, error) {
+	SQL := "INSERT INTO wishlist(user_id,course_id) VALUES(?,?)"
+	result, err := tx.ExecContext(ctx, SQL, wishlist.UserId, wishlist.CourseId)
+	helper.PanicIfError(err)
+	id, err := result.LastInsertId()
+	helper.PanicIfError(err)
+	wishlist.Id = int(id)
+
+	return wishlist, nil
+}
+
+func (repository *UserRepositoryImpl) GetWishlistByID(ctx context.Context, tx *sql.Tx, userID string) ([]domain.Wishlist, error) {
+	SQL := "SELECT id,user_id,course_id FROM wishlist WHERE user_id = ?"
+	rows, err := tx.QueryContext(ctx, SQL, userID)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var result []domain.Wishlist
+	for rows.Next() {
+		usercourse := domain.Wishlist{}
+		err := rows.Scan(&usercourse.Id, &usercourse.UserId, &usercourse.CourseId)
+		helper.PanicIfError(err)
+		result = append(result, usercourse)
+	}
+
+	return result, nil
+}

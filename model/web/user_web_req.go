@@ -12,3 +12,8 @@ type UserCourseRequest struct {
 	UserId   uuid.UUID `json:"user_id"`
 	CourseId int       `json:"course_id"`
 }
+
+type WishlistRequest struct {
+	UserId   uuid.UUID `json:"user_id"`
+	CourseId int       `json:"course_id"`
+}

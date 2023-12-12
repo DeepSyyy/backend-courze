@@ -44,6 +44,8 @@ func main() {
 	router.PUT("/api/courze/user", userController.UpdateUser)
 	router.POST("/api/courze/user/enroll", userController.Enroll)
 	router.GET("/api/courze/user/course/:userID", userController.GetUserCourseByID)
+	router.POST("/api/courze/user/wishlist", userController.AddWishlist)
+	router.GET("/api/courze/user/wishlist/:userID", userController.GetWishlistByID)
 	address := "localhost:8080"
 	fmt.Printf("server running on http://%v \n", address)
 	// Menjalankan server HTTP dengan router yang telah Anda buat

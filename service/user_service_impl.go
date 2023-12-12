@@ -153,3 +153,27 @@ func (service *UserServiceImpl) GetUserCourseByID(ctx context.Context, userID st
 	courses, _ := service.UserRepository.GetUserCourseByID(ctx, tx, userID)
 	return helper.ToUserCourseResponses(courses)
 }
+
+func (service *UserServiceImpl) AddWishlist(ctx context.Context, usercourse web.WishlistRequest) (web.WishlistResponse, error) {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	userCourse := domain.Wishlist{
+		UserId:   usercourse.UserId,
+		CourseId: usercourse.CourseId,
+	}
+	userCourse, _ = service.UserRepository.AddWishlist(ctx, tx, userCourse)
+
+	return helper.ToWishlistResponse(userCourse), nil
+
+}
+
+func (service *UserServiceImpl) GetWishlistByID(ctx context.Context, userID string) []web.WishlistResponse {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	courses, _ := service.UserRepository.GetWishlistByID(ctx, tx, userID)
+	return helper.ToWishlistResponses(courses)
+}

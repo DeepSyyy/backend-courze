@@ -20,3 +20,9 @@ type UserCourseResponse struct {
 	UserId   uuid.UUID `json:"user_id"`
 	CourseId int       `json:"course_id"`
 }
+
+type WishlistResponse struct {
+	Id       int       `json:"id"`
+	UserId   uuid.UUID `json:"user_id"`
+	CourseId int       `json:"course_id"`
+}
