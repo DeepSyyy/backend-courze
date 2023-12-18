@@ -177,3 +177,12 @@ func (service *UserServiceImpl) GetWishlistByID(ctx context.Context, userID stri
 	courses, _ := service.UserRepository.GetWishlistByID(ctx, tx, userID)
 	return helper.ToWishlistResponses(courses)
 }
+
+func (service *UserServiceImpl) DeleteWishlist(ctx context.Context, courseId int) {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	service.UserRepository.DeleteWishlist(ctx, tx, courseId)
+
+}

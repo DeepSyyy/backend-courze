@@ -16,4 +16,5 @@ type UserRepository interface {
 	GetUserCourseByID(ctx context.Context, tx *sql.Tx, userID string) ([]domain.UserCourse, error)
 	AddWishlist(ctx context.Context, tx *sql.Tx, wishlist domain.Wishlist) (domain.Wishlist, error)
 	GetWishlistByID(ctx context.Context, tx *sql.Tx, userID string) ([]domain.Wishlist, error)
+	DeleteWishlist(ctx context.Context, tx *sql.Tx, courseId int) domain.Wishlist
 }

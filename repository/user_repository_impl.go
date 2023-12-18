@@ -161,3 +161,14 @@ func (repository *UserRepositoryImpl) GetWishlistByID(ctx context.Context, tx *s
 
 	return result, nil
 }
+
+func (repository *UserRepositoryImpl) DeleteWishlist(ctx context.Context, tx *sql.Tx, courseId int) domain.Wishlist {
+	SQL := "DELETE FROM wishlist WHERE course_id = ?"
+	_, err := tx.ExecContext(ctx, SQL, courseId)
+	helper.PanicIfError(err)
+
+	course := domain.Wishlist{}
+	course.Id = courseId
+
+	return course
+}

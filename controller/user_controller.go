@@ -14,4 +14,5 @@ type UserController interface {
 	GetUserCourseByID(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
 	AddWishlist(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
 	GetWishlistByID(writer http.ResponseWriter, request *http.Request, param httprouter.Params)
+	DeleteWishlist(writer http.ResponseWriter, request *http.Request, params httprouter.Params)
 }

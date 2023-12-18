@@ -7,6 +7,7 @@ import (
 	"courze-backend-app/service"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
@@ -219,4 +220,19 @@ func (controller *UserControllerImpl) GetWishlistByID(writer http.ResponseWriter
 		}
 		helper.WriteToResponseBody(writer, webResponse)
 	}
+}
+
+func (controller *UserControllerImpl) DeleteWishlist(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	courseId := params.ByName("courseId")
+	id, err := strconv.Atoi(courseId)
+	helper.PanicIfError(err)
+
+	controller.UserService.DeleteWishlist(request.Context(), id)
+	web := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   nil,
+	}
+
+	helper.WriteToResponseBody(writer, web)
 }

@@ -14,4 +14,5 @@ type UserService interface {
 	GetUserCourseByID(ctx context.Context, userID string) []web.UserCourseResponse
 	AddWishlist(ctx context.Context, usercourse web.WishlistRequest) (web.WishlistResponse, error)
 	GetWishlistByID(ctx context.Context, userID string) []web.WishlistResponse
+	DeleteWishlist(ctx context.Context, courseID int)
 }
