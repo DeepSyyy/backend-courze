@@ -29,6 +29,10 @@ func main() {
 	userRepository := repository.NewUserRepository()
 	userService := service.NewUserService(userRepository, db, validate)
 	userController := controller.NewUserController(userService)
+	//payment
+	paymentRepository := repository.NewPaymentRepository()
+	paymentService := service.NewPaymentService(paymentRepository, db, validate)
+	paymentController := controller.NewPaymentController(paymentService)
 
 	router := httprouter.New()
 	//admin
@@ -47,6 +51,9 @@ func main() {
 	router.POST("/api/courze/user/wishlist", userController.AddWishlist)
 	router.GET("/api/courze/user/wishlist/:userID", userController.GetWishlistByID)
 	router.DELETE("/api/courze/user/wishlist/:courseID", userController.DeleteWishlist)
+	//payment
+	router.POST("/api/courze/user/payment", paymentController.CreatePayment)
+	router.GET("/api/courze/user/payment/:userID", paymentController.GetPaymentByUserID)
 	address := "localhost:8080"
 	fmt.Printf("server running on http://%v \n", address)
 	// Menjalankan server HTTP dengan router yang telah Anda buat
